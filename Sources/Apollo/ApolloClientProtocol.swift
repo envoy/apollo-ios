@@ -41,6 +41,7 @@ public protocol ApolloClientProtocol: class {
   /// - Returns: A query watcher object that can be used to control the watching behavior.
   func watch<Query: GraphQLQuery>(query: Query,
                                   cachePolicy: CachePolicy,
+                                  contextIdentifier: UUID?,
                                   resultHandler: @escaping GraphQLResultHandler<Query.Data>) -> GraphQLQueryWatcher<Query>
 
   /// Performs a mutation by sending it to the server.
@@ -53,6 +54,7 @@ public protocol ApolloClientProtocol: class {
   /// - Returns: An object that can be used to cancel an in progress mutation.
   func perform<Mutation: GraphQLMutation>(mutation: Mutation,
                                           publishResultToStore: Bool,
+                                          contextIdentifier: UUID?,
                                           queue: DispatchQueue,
                                           resultHandler: GraphQLResultHandler<Mutation.Data>?) -> Cancellable
 
@@ -78,6 +80,7 @@ public protocol ApolloClientProtocol: class {
   ///   - resultHandler: An optional closure that is called when mutation results are available or when an error occurs.
   /// - Returns: An object that can be used to cancel an in progress subscription.
   func subscribe<Subscription: GraphQLSubscription>(subscription: Subscription,
+                                                    contextIdentifier: UUID?,
                                                     queue: DispatchQueue,
                                                     resultHandler: @escaping GraphQLResultHandler<Subscription.Data>) -> Cancellable
 }

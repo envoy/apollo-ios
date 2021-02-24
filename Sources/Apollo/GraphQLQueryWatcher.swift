@@ -11,7 +11,7 @@ public final class GraphQLQueryWatcher<Query: GraphQLQuery>: Cancellable, Apollo
   public let query: Query
   let resultHandler: GraphQLResultHandler<Query.Data>
 
-  private let contextIdentifier = UUID()
+  private let contextIdentifier: UUID?
 
   private var fetching: Atomic<Cancellable?> = Atomic(nil)
 
@@ -25,9 +25,11 @@ public final class GraphQLQueryWatcher<Query: GraphQLQuery>: Cancellable, Apollo
   ///   - resultHandler: The result handler to call with changes.
   public init(client: ApolloClientProtocol,
               query: Query,
+              contextIdentifier: UUID? = UUID(),
               resultHandler: @escaping GraphQLResultHandler<Query.Data>) {
     self.client = client
     self.query = query
+    self.contextIdentifier = contextIdentifier
     self.resultHandler = resultHandler
 
     client.store.subscribe(self)
