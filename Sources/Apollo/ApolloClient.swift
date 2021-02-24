@@ -100,6 +100,7 @@ extension ApolloClient: ApolloClientProtocol {
 
   public func watch<Query: GraphQLQuery>(query: Query,
                                          cachePolicy: CachePolicy = .returnCacheDataElseFetch,
+                                         contextIdentifier: UUID? = nil,
                                          resultHandler: @escaping GraphQLResultHandler<Query.Data>) -> GraphQLQueryWatcher<Query> {
     let watcher = GraphQLQueryWatcher(client: self,
                                       query: query,
@@ -111,12 +112,13 @@ extension ApolloClient: ApolloClientProtocol {
   @discardableResult
   public func perform<Mutation: GraphQLMutation>(mutation: Mutation,
                                                  publishResultToStore: Bool = true,
+                                                 contextIdentifier: UUID? = nil,
                                                  queue: DispatchQueue = .main,
                                                  resultHandler: GraphQLResultHandler<Mutation.Data>? = nil) -> Cancellable {
     return self.networkTransport.send(
       operation: mutation,
       cachePolicy: publishResultToStore ? .default : .fetchIgnoringCacheCompletely,
-      contextIdentifier: nil,
+      contextIdentifier: contextIdentifier,
       callbackQueue: queue,
       completionHandler: { result in
         resultHandler?(result)
@@ -146,11 +148,12 @@ extension ApolloClient: ApolloClientProtocol {
   
   @discardableResult
   public func subscribe<Subscription: GraphQLSubscription>(subscription: Subscription,
+                                                           contextIdentifier: UUID? = nil,
                                                            queue: DispatchQueue = .main,
                                                            resultHandler: @escaping GraphQLResultHandler<Subscription.Data>) -> Cancellable {
     return self.networkTransport.send(operation: subscription,
                                       cachePolicy: .default,
-                                      contextIdentifier: nil,
+                                      contextIdentifier: contextIdentifier,
                                       callbackQueue: queue,
                                       completionHandler: resultHandler)
   }
